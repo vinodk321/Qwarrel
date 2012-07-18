@@ -1,0 +1,52 @@
+public class ForumPageExt {
+public string currentId { get;set;}
+public string fbName { get; set; }
+public string fbId { get; set; }
+public string fbaccessToken {get;set;}
+public integer fbAnswerCount {get;set;}
+public string warMessage {get;set;}
+public List<forumAnswer__c> fans{get;set;}
+public final forumQuestion__c fqs;
+
+
+public ForumPageExt(ApexPages.StandardController controller) {
+PageReference x = ApexPages.currentPage();
+String y = x.getUrl();
+
+if(y.contains('TopicListings'))
+{
+ fqs = (forumQuestion__c)controller.getRecord();
+ warMessage = '';
+ if(ApexPages.currentPage().getParameters().get('cmpost') == 'yes')
+ {
+  warMessage  = ''; // Add verbage if you need a message for validating comment
+ }
+ if(fqs != null)
+ {
+ try{
+ fans =[select id,name,reply__c,approved__c,dateCreated__c from forumAnswer__c where topicanswer__r.id =:fqs.id];
+ fbAnswerCount = fans.size();
+ }catch(Exception e){}
+}
+}
+if(ApexPages.currentPage().getParameters().get('fbuserid') != '' || ApexPages.currentPage().getParameters().get('fbuserid') != null)
+{
+ this.fbId = ApexPages.currentPage().getParameters().get('fbuserid');
+
+ if(fbId != null || fbId !=  '')
+ {
+ try{
+  FBUserSession__c fbus = [select id,fbuserId__c,UserInfo__c,Name from FBUserSession__c where fbuserId__c=:fbId];
+  this.fbName = fbus.Name;
+  this.fbaccessToken = fbus.UserInfo__c;
+  }catch (Exception ex){}
+ }
+ }
+
+else 
+{
+  
+ }
+}
+
+}

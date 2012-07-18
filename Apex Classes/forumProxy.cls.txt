@@ -1,0 +1,78 @@
+public class forumProxy {
+    public string ttopic{get; set;}
+    public string tdesc{get; set;}
+    public string temail{get; set;}
+    public string headers {get; set;}
+
+    public string ftopic = '';
+    public string fcategory = '';
+   
+    public PageReference getTopic() {
+
+    return null;
+    }
+    
+    public PageReference init() {
+     if ( ApexPages.currentPage().getParameters().get('topic') != null )
+     {
+         ttopic = ApexPages.currentPage().getParameters().get('topic');
+         tdesc = ApexPages.currentPage().getParameters().get('desc');
+         temail = ApexPages.currentPage().getParameters().get('email');
+         fcategory = ApexPages.currentPage().getParameters().get('fromCategory');
+         forumQuestion__c fq = new forumQuestion__c();
+         fq.name = ttopic;
+         fq.details__c = tdesc;
+         fq.email__c = temail;
+         fq.forumCategory__c = fcategory;
+         insert fq;
+         PageReference listPage = new PageReference('/apex/forumPage?id='+fcategory+'&fbuserid='+ ApexPages.currentPage().getParameters().get('fbuserid'));
+         listPage.setRedirect(true);
+         return listPage;
+     }
+     else if (ApexPages.currentPage().getParameters().get('namea') != null) 
+     {  
+  
+         ttopic = ApexPages.currentPage().getParameters().get('namea');
+         tdesc = ApexPages.currentPage().getParameters().get('reply');
+         ftopic = ApexPages.currentPage().getParameters().get('fromTopic');
+         forumAnswer__c fa = new forumAnswer__c();         
+         fa.name = ttopic;
+         fa.reply__c = tdesc;   
+         fa.topicanswer__c  = ftopic;
+         insert fa;          
+         List<FBUserSession__c> dbus = [select id,name,fbemail__c from FBUserSession__c where fbuserId__c=:ApexPages.currentPage().getParameters().get('fbuserid')];
+         List<EmailUser__c> existeu = [select id from EmailUser__c where FBUserSession__c=:dbus[0].id and forumQuestion__c=:ftopic limit 1];
+         if(existeu.size() == 0){
+         EmailUser__c eu = new EmailUser__c();
+         eu.FBUserSession__c = dbus[0].id;
+         eu.forumQuestion__c = ftopic;
+         insert eu;
+         }
+         List<EmailUser__c> ems = [select id,FBUserSession__c,FBUserSession__r.fbemail__c,FBUserSession__r.name,forumQuestion__r.name from EmailUser__c where forumQuestion__c=:ftopic];          
+         if(ems.size() != 0)
+         {
+             for(EmailUser__c e:ems){
+             if(e.FBUserSession__c != dbus[0].id){
+             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+             String[] toAddress  = new String[]{e.FBUserSession__r.fbemail__c};
+             mail.setToAddresses(toAddress);       
+             mail.setReplyTo('vinod.anand@jktech.com');
+             mail.setSenderDisplayName('Qwarrel');
+             mail.setSubject( 'On Topic : ' + e.forumQuestion__r.name );
+             mail.setBccSender(false);
+             mail.setUseSignature(false);          
+             mail.setHtmlBody('Hello <b>' + e.FBUserSession__r.name + '<b>,<br><p>' + dbus[0].name + ' also commented on topic ' + e.forumQuestion__r.name + ' see the comment below,</p><p>' + tdesc +'</p>');
+             Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+             }
+             }          
+         }
+         PageReference listPage = new PageReference('/apex/TopicListings?cmpost=yes&id='+ftopic+'&fbuserid='+ ApexPages.currentPage().getParameters().get('fbuserid'));
+         listPage.setRedirect(true);
+         return listPage;
+      }   
+   else 
+   {
+    return null;
+   }
+    }
+}

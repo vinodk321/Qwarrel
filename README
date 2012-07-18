@@ -1,0 +1,39 @@
+About Qwarrel App
+
+1. Qwarrel App is nothing but  a Discussion Forum. Basically this mobile app is  developed using Jquery mobile, Visual force and Apex and force.com sites. 
+
+2. Qwarrel App is browser based mobile application,
+
+3. this Qwarrel app has also Facebook login option to post the comments/topic but as a guest Users also can view the Qwarrel App.
+
+4. Here the Qwarrel app  basically  the information is organized  as the Categories like Books, Movies , Creativity & innovative ideas ….
+
+5 . Under these Categories an User can create a topic/view the topics. Here the topic acts as a discussion thread for user to discuss that is by means of posting comments,
+
+6. But for posting the comments an User should be logged in using Facebook User id. 
+
+7. I have used Facebook integration api to communicate from SFDC and Facebook.
+
+8. And also there is a separate Facebook app is created in Facebook called Qwarrel, 
+
+9. This app does not require the SFDC user id and this app is used for community for sharing the information across sales user/Customers/Contacts/Accounts in SFDC who has Facebook User id.
+
+10. As a future enhancements, We can also provide SFDC authentication and authorization using SFDC rest api.
+
+Test Data for Qwarrel App:
+
+1. Books
+    a. Apex  -  Business  Logic/Custom Logic in SFDC 
+    b. Visual Force - For UI interface in SFDC 
+    c. Adobe Flex -  To build RIA 
+    d. Webservices  - Integration with Third part apps.
+    e. Rest Api 
+    f.  ORM tools. - Object to Relational Mapping.
+2. Movies. 
+     a. Spider Man
+     b.  Titanic
+     c.  Lord of the Rings
+     d. Mission Impossible 
+3. Creativity and Innovative Ideas. 
+      a. Future Mobile Apps.
+      b. Cloud Computing
